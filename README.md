@@ -33,8 +33,10 @@ https://www.arhohuttunen.com/junit-5-gradle-example/
 Success! I have added the barebones bits and pieces and I successfully ran one test!
 
 
+2021.06.14  
+I'm adding some functionality from the 5740 bot to the demo project.
 
+As a demo, I'm going to work on the command "ForceExtendHood"
 
-
-
+I want to use the methods in the HoodSubsytem class, so I need to fake out the underlying components. The method `hoodAngleFinder` seems to be a piece of core functionality, so I'm starting there to add my mocks. The hood subsystem should be composable of mutliple sub-sub systems.  
 
