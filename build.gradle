@@ -3,6 +3,11 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2021.3.1"
 }
 
+repositories  // JUnit might need this
+{
+    mavenCentral()
+}
+
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
@@ -12,17 +17,16 @@ def ROBOT_MAIN_CLASS = "frc.robot.Main"
 def includeDesktopSupport = true
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
-// Also defines JUnit 4.
+// Also defines JUnit 5.
 dependencies {
     implementation wpi.deps.wpilib()
     nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)
 
-
     implementation wpi.deps.vendor.java()
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
-    //testImplementation 'junit:junit:4.12'
+    testImplementation(platform('org.junit:junit-bom:5.7.2'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
 
     // Enable simulation gui support. Must check the box in vscode to enable support
     // upon debugging
@@ -50,4 +54,7 @@ jar {
 
 test {
     useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
