@@ -4,41 +4,75 @@
 
 package frc.robot.subsystems;
 
-import frc.robot.Constants.HoodConstants;
-import frc.robot.subsystems.interfaces.IHoodSubsystem;
-import frc.robot.subsystems.interfaces.ITalonSRX;
+
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.IMotorControllerEnhanced;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-public class HoodSubsystem extends SubsystemBase implements IHoodSubsystem
+import frc.robot.Constants.SwerveDriveModuleConstants.HoodConstants;
+import frc.robot.Constants.SwerveDriveModuleConstants.ShooterConstants;
+
+public class HoodSubsystem extends SubsystemBase 
 {
     private PIDController m_hoodPID;
-    private ITalonSRX m_hoodMotor;
+    private TalonSRX m_hoodMotor;
 
-    // private TalonSRX hoodMotor = new TalonSRX(CANBusIDs.k_HoodID);
-    // private DutyCycleEncoder m_hexAbsoluteEncoder = new DutyCycleEncoder(HexEncoderInputs.k_absoluteInput);
-    // private Encoder m_hexQuadEncoder = new Encoder(HexEncoderInputs.k_quadratureA, HexEncoderInputs.k_quadratureB);
+    private DutyCycleEncoder m_hexAbsoluteEncoder;
+    private Encoder m_hexQuadEncoder;
   
     private double m_hoodRotations;
     private static double m_quadOffset;
   
     
-    /** Creates a new HoodSubsystem. */
-    public HoodSubsystem(ITalonSRX talon) 
+    /** */
+
+
+    /**
+     * Creates a Hood Subsystem. The Hood includes the motor to move the  
+     * @param hoodMotor
+     * @param hexAbsoluteEncoder
+     * @param hexQuadEncoder
+     */
+    public HoodSubsystem(TalonSRX hoodMotor, DutyCycleEncoder hexAbsoluteEncoder, Encoder hexQuadEncoder) 
     {
-        m_hoodMotor = talon;
+        m_hoodMotor = hoodMotor;
+        m_hexAbsoluteEncoder = hexAbsoluteEncoder;
+        m_hexQuadEncoder = hexQuadEncoder;
         
         m_hoodPID = new PIDController(HoodConstants.k_hoodP, HoodConstants.k_hoodI, HoodConstants.k_hoodD);
         m_hoodPID.setTolerance(HoodConstants.k_hoodTolerance);
+
+        m_hoodMotor.configOpenloopRamp(ShooterConstants.k_rampRate);
+        m_hoodMotor.setNeutralMode(NeutralMode.Brake); 
+    
+        m_hexQuadEncoder.setReverseDirection(true);
+        m_hexQuadEncoder.reset();
+        m_hoodPID.disableContinuousInput();
+
+        adjustHood();
+
     }
 
     @Override
-    public void periodic() {
-    // This method will be called once per scheduler run
+    public void periodic() 
+    {
+        // This method will be called once per scheduler run
+        m_hoodRotations = m_hexAbsoluteEncoder.get();
+        SmartDashboard.putNumber("Hood Abs Encoder", getAbsEncoder());
+        SmartDashboard.putNumber("Hood Quad Encoder", (double) getQuadEncoder() + m_quadOffset);
+        SmartDashboard.putNumber("QuadOffset", m_quadOffset);
+    }
+
+    public void adjustHood()
+    {
+        m_hoodRotations = m_hexAbsoluteEncoder.get();
+        m_quadOffset = (m_hoodRotations - HoodConstants.k_retractAbsSetpoint) * HoodConstants.k_quadTicksPerRotation;
     }
 
 
@@ -47,10 +81,14 @@ public class HoodSubsystem extends SubsystemBase implements IHoodSubsystem
         return m_hoodPID.calculate((double) getQuadEncoder() + m_quadOffset, setpoint);
     }
 
+    public double getAbsEncoder()
+    {
+        return m_hexAbsoluteEncoder.get();
+    }
+
     public int getQuadEncoder()
     {
-        // return m_hexQuadEncoder.get();
-        return -1;
+        return m_hexQuadEncoder.get();
     }
 
 

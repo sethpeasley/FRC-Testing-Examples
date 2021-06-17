@@ -40,3 +40,6 @@ As a demo, I'm going to work on the command "ForceExtendHood"
 
 I want to use the methods in the HoodSubsytem class, so I need to fake out the underlying components. The method `hoodAngleFinder` seems to be a piece of core functionality, so I'm starting there to add my mocks. The hood subsystem should be composable of mutliple sub-sub systems.  
 
+For next year, we should use contstructor injection pattern with hardware.  
+
+

@@ -3,14 +3,15 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
-import frc.robot.subsystems.interfaces.IHoodSubsystem;
+
+import frc.robot.subsystems.HoodSubsystem;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 //** Moves the Hood to the extended position */
 public class HoodForceExtend extends CommandBase 
 {
-    IHoodSubsystem m_hood;
+    HoodSubsystem m_hood;
 
 
     /** Creates a new ForceExtendHood. */
