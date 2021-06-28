@@ -76,8 +76,6 @@ public class SwerveModule {
 
         m_driveEncoder.setVelocityConversionFactor(SwerveDriveModuleConstants.k_CANEncoderVelocityCoefficient);
         m_driveEncoder.setPositionConversionFactor(SwerveDriveModuleConstants.k_CANEncoderPositionCoefficient);
-    
-      System.out.println("her!!!e");
     }
 
     /**
